@@ -3,180 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Naim Pro Cashbook</title>
+    <title>Naim Cashbook Ultra</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
         
         :root {
-            --primary: #4834d4; --secondary: #6c5ce7; --bg: #f8f9fd;
-            --card: #ffffff; --text: #2d3436; --plus: #10ac84; --minus: #ee5253;
-            --shadow: 0 10px 30px rgba(72, 52, 212, 0.1);
+            --bg: #f4f7fb; --card: #ffffff; --text: #2d3436; --primary: #4834d4;
+            --plus: #10ac84; --minus: #ee5253; --shadow: rgba(0,0,0,0.1);
+        }
+
+        body.dark {
+            --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --primary: #bb86fc;
+            --shadow: rgba(0,0,0,0.5);
         }
 
         body {
             background: var(--bg); color: var(--text); font-family: 'Hind Siliguri', sans-serif;
-            margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0; transition: 0.3s; user-select: none; overflow-x: hidden;
         }
 
-        /* হেডার ডিজাইন */
+        /* হেডার ও থিম টগল */
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; padding: 60px 20px 40px; text-align: center;
-            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            background: linear-gradient(135deg, #4834d4, #6c5ce7); color: white;
+            padding: 50px 20px 40px; text-align: center; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            position: relative;
+        }
+        .theme-btn {
+            position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2);
+            border: none; color: white; padding: 8px 12px; border-radius: 12px; font-weight: bold;
         }
 
         /* কার্ড ডিজাইন */
-        .main-card {
+        .card {
             background: var(--card); margin: -30px 15px 15px; padding: 25px;
-            border-radius: 30px; box-shadow: var(--shadow);
+            border-radius: 30px; box-shadow: 0 10px 25px var(--shadow);
         }
 
-        .bike-box {
+        .bike-card {
             background: linear-gradient(45deg, #6c5ce7, #a29bfe); color: white;
             padding: 20px; border-radius: 25px; margin: 0 15px 15px;
         }
 
         /* ইনপুট ও বাটন */
         input, textarea {
-            width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 18px;
-            border: 1px solid #eee; outline: none; font-size: 16px; box-sizing: border-box; background: #fafafa;
+            width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 15px;
+            border: 1px solid #ddd; background: var(--bg); color: var(--text); outline: none; box-sizing: border-box;
         }
 
         .type-selector { display: flex; gap: 10px; margin: 15px 0; }
         .t-btn {
-            flex: 1; padding: 15px; border-radius: 18px; border: 2px solid #eee;
-            text-align: center; font-weight: bold; cursor: pointer; transition: 0.3s;
+            flex: 1; padding: 14px; border-radius: 15px; border: 2px solid #ddd;
+            text-align: center; font-weight: bold; transition: 0.3s;
         }
-        .t-btn.active-plus { border-color: var(--plus); background: var(--plus); color: white; }
-        .t-btn.active-minus { border-color: var(--minus); background: var(--minus); color: white; }
+        .t-btn.active-plus { background: var(--plus); border-color: var(--plus); color: white; }
+        .t-btn.active-minus { background: var(--minus); border-color: var(--minus); color: white; }
 
-        .btn-submit {
-            width: 100%; padding: 18px; border-radius: 20px; border: none;
-            background: var(--primary); color: white; font-size: 18px; font-weight: bold;
-            box-shadow: 0 8px 20px rgba(72, 52, 212, 0.3);
+        .btn-main {
+            width: 100%; padding: 16px; border-radius: 18px; border: none;
+            background: var(--primary); color: white; font-size: 17px; font-weight: bold;
         }
 
-        /* ইতিহাস তালিকা */
+        .btn-reset {
+            background: none; border: 1px solid var(--minus); color: var(--minus);
+            padding: 8px 15px; border-radius: 10px; margin: 10px 15px; font-weight: bold;
+        }
+
+        /* তালিকা */
         .item {
-            background: white; margin: 10px 15px; padding: 18px; border-radius: 22px;
+            background: var(--card); margin: 10px 15px; padding: 18px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 10px var(--shadow); transition: 0.3s;
         }
+        .item:active { transform: scale(0.97); }
 
-        /* কাস্টম এক্সিট পপ-আপ (সবচাইতে হাই-কোয়ালিটি) */
-        .modal-overlay {
+        /* পপ-আপ এনিমেশন */
+        .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); display: none; align-items: center;
-            justify-content: center; z-index: 10000;
+            justify-content: center; z-index: 10000; animation: fadeIn 0.3s;
         }
         .modal-box {
-            background: white; padding: 30px; border-radius: 30px; width: 80%; text-align: center;
+            background: var(--card); padding: 30px; border-radius: 30px; width: 85%;
+            text-align: center; transform: scale(0.7); transition: 0.3s;
         }
-        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-yes { flex: 1; background: var(--minus); color: white; padding: 12px; border-radius: 15px; border: none; font-weight: bold; }
-        .btn-no { flex: 1; background: var(--plus); color: white; padding: 12px; border-radius: 15px; border: none; font-weight: bold; }
+        .modal.show .modal-box { transform: scale(1); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         #toast {
             position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
-            background: #333; color: white; padding: 12px 30px; border-radius: 50px;
-            transition: 0.5s; z-index: 20000;
+            background: #333; color: white; padding: 12px 25px; border-radius: 50px; transition: 0.5s;
         }
         #toast.show { bottom: 40px; }
     </style>
 </head>
-<body>
+<body id="body">
 
 <div id="toast"></div>
 
-<div id="exit-modal" class="modal-overlay">
+<div id="view-modal" class="modal">
     <div class="modal-box">
-        <h3 style="margin:0;">অ্যাপ থেকে বের হতে চান?</h3>
-        <p style="color:#666;">আপনার সকল হিসাব সেভ করা আছে।</p>
-        <div class="modal-btns">
-            <button class="btn-yes" onclick="confirmExit()">হ্যাঁ</button>
-            <button class="btn-no" onclick="closeModal()">না</button>
+        <h3 id="v-title" style="margin:0;">বিবরণ</h3>
+        <hr style="opacity:0.2; margin:15px 0;">
+        <p id="v-note" style="font-size:18px;"></p>
+        <p id="v-time" style="font-size:12px; opacity:0.6;"></p>
+        <button class="btn-main" onclick="closeModal('view-modal')">ঠিক আছে</button>
+    </div>
+</div>
+
+<div id="exit-modal" class="modal">
+    <div class="modal-box">
+        <h3>বের হতে চান?</h3>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button onclick="confirmExit()" style="flex:1; background:var(--minus); border:none; color:white; padding:12px; border-radius:15px; font-weight:bold;">হ্যাঁ</button>
+            <button onclick="closeModal('exit-modal')" style="flex:1; background:var(--plus); border:none; color:white; padding:12px; border-radius:15px; font-weight:bold;">না</button>
         </div>
     </div>
 </div>
 
-<div id="main-app">
-    <div class="header">
-        <p style="opacity:0.8; margin:0;">হ্যালো নাঈম, আপনার মোট ব্যালেন্স</p>
-        <h1 id="total-bal" style="font-size:45px; margin:5px 0;">৳ ০</h1>
-    </div>
-
-    <div class="bike-box">
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-            <span>🏍️ RTR 160 4V লক্ষ্য</span>
-            <span id="percent">0%</span>
-        </div>
-        <h2 id="bike-fund" style="margin:0 0 10px 0;">৳ ০</h2>
-        <div style="width:100%; height:8px; background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden;">
-            <div id="bar" style="width:0%; height:100%; background:white; transition:1s;"></div>
-        </div>
-    </div>
-
-    <div class="main-card">
-        <input type="number" id="amt" placeholder="টাকার পরিমাণ (৳)" inputmode="numeric">
-        <textarea id="note" placeholder="লেনদেনের বিবরণ..."></textarea>
-        <div class="type-selector">
-            <div id="p-btn" class="t-btn active-plus" onclick="setMode('plus')">জমা (+)</div>
-            <div id="m-btn" class="t-btn" onclick="setMode('minus')">খরচ (-)</div>
-        </div>
-        <button class="btn-submit" onclick="addEntry()">হিসাব যোগ করুন 🚀</button>
-    </div>
-
-    <div id="history"></div>
-    <div style="height:50px;"></div>
+<div class="header">
+    <button class="theme-btn" onclick="toggleTheme()">🌓 থিম</button>
+    <small>মোট ব্যালেন্স</small>
+    <h1 id="total-bal" style="font-size:48px; margin:5px 0;">৳ ০</h1>
 </div>
+
+<div class="bike-card">
+    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+        <strong>RTR 160 4V লক্ষ্য</strong>
+        <span id="percent">0%</span>
+    </div>
+    <h2 id="bike-fund" style="margin:0 0 10px 0;">৳ ০</h2>
+    <div style="width:100%; height:8px; background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden;">
+        <div id="bar" style="width:0%; height:100%; background:white; transition:1s;"></div>
+    </div>
+</div>
+
+<div class="card">
+    <input type="number" id="amt" placeholder="টাকার পরিমাণ" inputmode="numeric">
+    <textarea id="note" placeholder="বিস্তারিত লিখুন..."></textarea>
+    <div class="type-selector">
+        <div id="p-btn" class="t-btn active-plus" onclick="setMode('plus')">জমা (+)</div>
+        <div id="m-btn" class="t-btn" onclick="setMode('minus')">খরচ (-)</div>
+    </div>
+    <button class="btn-main" onclick="save()">সেভ করুন 🚀</button>
+</div>
+
+<div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin-left:20px;">ইতিহাস</h3>
+    <button class="btn-reset" onclick="resetAll()">Reset All 🗑️</button>
+</div>
+
+<div id="history"></div>
+<div style="height:50px;"></div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('naim_simple_db')) || [];
-    let currentMode = 'plus';
+    let db = JSON.parse(localStorage.getItem('naim_v4')) || [];
+    let mode = 'plus';
 
-    // ব্যাক বাটন ম্যাজিক
+    // থিম টগল
+    function toggleTheme() {
+        document.getElementById('body').classList.toggle('dark');
+        localStorage.setItem('naim_theme', document.getElementById('body').classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    // ব্যাক বাটন পপ-আপ
     history.pushState(null, null, location.href);
-    window.onpopstate = function() {
-        document.getElementById('exit-modal').style.display = 'flex';
-        history.pushState(null, null, location.href);
-    };
+    window.onpopstate = () => openModal('exit-modal');
 
-    function closeModal() { document.getElementById('exit-modal').style.display = 'none'; }
+    function openModal(id) {
+        const m = document.getElementById(id);
+        m.style.display = 'flex';
+        setTimeout(() => m.classList.add('show'), 10);
+    }
+
+    function closeModal(id) {
+        const m = document.getElementById(id);
+        m.classList.remove('show');
+        setTimeout(() => m.style.display = 'none', 300);
+    }
+
     function confirmExit() { window.location.href = "about:blank"; }
 
     function setMode(m) {
-        currentMode = m;
+        mode = m;
         document.getElementById('p-btn').className = 't-btn' + (m==='plus'?' active-plus':'');
         document.getElementById('m-btn').className = 't-btn' + (m==='minus'?' active-minus':'');
     }
 
-    function addEntry() {
+    function save() {
         const val = Number(document.getElementById('amt').value);
-        const note = document.getElementById('note').value || "বিবরণ নেই";
-        if (!val) return showToast("টাকা লিখুন!");
+        const txt = document.getElementById('note').value || "বিবরণ নেই";
+        if(!val) return showToast("টাকার পরিমাণ দিন");
 
-        db.push({ a: currentMode === 'minus' ? -val : val, n: note, d: new Date().toLocaleString('bn-BD') });
-        localStorage.setItem('naim_simple_db', JSON.stringify(db));
+        db.push({ a: mode==='minus'?-val:val, n: txt, d: new Date().toLocaleString('bn-BD') });
+        localStorage.setItem('naim_v4', JSON.stringify(db));
         render();
         document.getElementById('amt').value = '';
         document.getElementById('note').value = '';
-        showToast("সফলভাবে যোগ হয়েছে ✅");
+        showToast("সফলভাবে সেভ হয়েছে ✅");
+    }
+
+    function viewDetails(index) {
+        const item = db[index];
+        document.getElementById('v-title').innerText = item.a > 0 ? "জমার বিবরণ" : "খরচের বিবরণ";
+        document.getElementById('v-note').innerText = item.n;
+        document.getElementById('v-time').innerText = item.d;
+        openModal('view-modal');
+    }
+
+    function resetAll() {
+        if(confirm("সব হিসাব কি মুছে ফেলতে চান? এটি আর ফিরে আসবে না!")) {
+            db = [];
+            localStorage.setItem('naim_v4', JSON.stringify(db));
+            render();
+            showToast("সব রিসেট করা হয়েছে 🗑️");
+        }
     }
 
     function render() {
-        const list = document.getElementById('history');
-        list.innerHTML = ''; let total = 0;
-        db.slice().reverse().forEach(i => {
-            total += i.a;
-            list.innerHTML += `<div class="item" style="border-left: 5px solid ${i.a>0?'var(--plus)':'var(--minus)'}">
-                <div><b>${i.n}</b><br><small style="opacity:0.6;">${i.d}</small></div>
-                <div style="color:${i.a>0?'var(--plus)':'var(--minus)'}; font-weight:800;">${i.a>0?'+':''}${i.a}</div>
-            </div>`;
+        const h = document.getElementById('history');
+        h.innerHTML = ''; let t = 0;
+        db.forEach((item, index) => {
+            t += item.a;
+            h.innerHTML = `<div class="item" onclick="viewDetails(${index})">
+                <div><b>View Details</b><br><small style="opacity:0.6;">${item.d}</small></div>
+                <div style="color:${item.a>0?'var(--plus)':'var(--minus)'}; font-weight:bold; font-size:18px;">${item.a>0?'+':''}${item.a}</div>
+            </div>` + h.innerHTML;
         });
-        document.getElementById('total-bal').innerText = `৳ ${total}`;
-        let bike = total * 0.8;
-        let p = Math.min((bike/150000)*100, 100).toFixed(1);
-        document.getElementById('bike-fund').innerText = `৳ ${Math.floor(bike)}`;
+        document.getElementById('total-bal').innerText = `৳ ${t}`;
+        let b = t * 0.8;
+        let p = Math.min((b/150000)*100, 100).toFixed(1);
+        document.getElementById('bike-fund').innerText = `৳ ${Math.floor(b)}`;
         document.getElementById('percent').innerText = p + '%';
         document.getElementById('bar').style.width = p + '%';
     }
@@ -187,7 +244,10 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    render();
+    window.onload = () => {
+        if(localStorage.getItem('naim_theme') === 'dark') document.getElementById('body').classList.add('dark');
+        render();
+    };
 </script>
 </body>
 </html>

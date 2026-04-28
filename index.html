@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Naim Cashbook Ultra</title>
+    <title>Naim Ultra Pro Cashbook</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
         
         :root {
             --bg: #f4f7fb; --card: #ffffff; --text: #2d3436; --primary: #4834d4;
-            --plus: #10ac84; --minus: #ee5253; --shadow: rgba(0,0,0,0.1);
+            --plus: #10ac84; --minus: #ee5253; --shadow: rgba(0,0,0,0.08);
         }
 
         body.dark {
-            --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --primary: #bb86fc;
-            --shadow: rgba(0,0,0,0.5);
+            --bg: #121212; --card: #1e1e1e; --text: #f1f2f6; --primary: #bb86fc;
+            --shadow: rgba(0,0,0,0.4);
         }
 
         body {
@@ -22,77 +22,72 @@
             margin: 0; padding: 0; transition: 0.3s; user-select: none; overflow-x: hidden;
         }
 
-        /* হেডার ও থিম টগল */
+        /* বাটন অ্যানিমেশন */
+        button, .t-btn, .item {
+            cursor: pointer; transition: transform 0.1s ease, background 0.3s ease;
+            touch-action: manipulation;
+        }
+        button:active, .t-btn:active, .item:active { transform: scale(0.92); }
+
         .header {
             background: linear-gradient(135deg, #4834d4, #6c5ce7); color: white;
-            padding: 50px 20px 40px; text-align: center; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
-            position: relative;
-        }
-        .theme-btn {
-            position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2);
-            border: none; color: white; padding: 8px 12px; border-radius: 12px; font-weight: bold;
+            padding: 60px 20px 40px; text-align: center; border-bottom-left-radius: 45px; border-bottom-right-radius: 45px;
         }
 
-        /* কার্ড ডিজাইন */
         .card {
             background: var(--card); margin: -30px 15px 15px; padding: 25px;
-            border-radius: 30px; box-shadow: 0 10px 25px var(--shadow);
+            border-radius: 35px; box-shadow: 0 10px 30px var(--shadow);
+            animation: slideUp 0.5s ease;
         }
 
         .bike-card {
             background: linear-gradient(45deg, #6c5ce7, #a29bfe); color: white;
-            padding: 20px; border-radius: 25px; margin: 0 15px 15px;
+            padding: 20px; border-radius: 30px; margin: 0 15px 15px;
         }
 
-        /* ইনপুট ও বাটন */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* কাস্টম ইনপুট */
         input, textarea {
-            width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 15px;
+            width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 18px;
             border: 1px solid #ddd; background: var(--bg); color: var(--text); outline: none; box-sizing: border-box;
         }
 
         .type-selector { display: flex; gap: 10px; margin: 15px 0; }
-        .t-btn {
-            flex: 1; padding: 14px; border-radius: 15px; border: 2px solid #ddd;
-            text-align: center; font-weight: bold; transition: 0.3s;
-        }
+        .t-btn { flex: 1; padding: 15px; border-radius: 18px; border: 2px solid #ddd; text-align: center; font-weight: bold; }
         .t-btn.active-plus { background: var(--plus); border-color: var(--plus); color: white; }
         .t-btn.active-minus { background: var(--minus); border-color: var(--minus); color: white; }
 
         .btn-main {
-            width: 100%; padding: 16px; border-radius: 18px; border: none;
-            background: var(--primary); color: white; font-size: 17px; font-weight: bold;
+            width: 100%; padding: 18px; border-radius: 22px; border: none;
+            background: var(--primary); color: white; font-size: 18px; font-weight: bold;
+            box-shadow: 0 10px 20px rgba(72, 52, 212, 0.2);
         }
 
         .btn-reset {
-            background: none; border: 1px solid var(--minus); color: var(--minus);
-            padding: 8px 15px; border-radius: 10px; margin: 10px 15px; font-weight: bold;
+            background: #ffeaa7; color: #d63031; border: none; padding: 10px 20px;
+            border-radius: 15px; font-weight: bold; margin: 10px 20px; display: block;
         }
 
-        /* তালিকা */
-        .item {
-            background: var(--card); margin: 10px 15px; padding: 18px; border-radius: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 10px var(--shadow); transition: 0.3s;
-        }
-        .item:active { transform: scale(0.97); }
-
-        /* পপ-আপ এনিমেশন */
+        /* পপ-আপ অ্যানিমেশন */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); display: none; align-items: center;
-            justify-content: center; z-index: 10000; animation: fadeIn 0.3s;
+            background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 10000;
         }
         .modal-box {
-            background: var(--card); padding: 30px; border-radius: 30px; width: 85%;
-            text-align: center; transform: scale(0.7); transition: 0.3s;
+            background: var(--card); padding: 35px; border-radius: 40px; width: 85%;
+            text-align: center; transform: scale(0.5); opacity: 0; transition: 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28);
         }
-        .modal.show .modal-box { transform: scale(1); }
+        .modal.show .modal-box { transform: scale(1); opacity: 1; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .item {
+            background: var(--card); margin: 10px 15px; padding: 18px; border-radius: 22px;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px var(--shadow);
+        }
 
         #toast {
             position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
-            background: #333; color: white; padding: 12px 25px; border-radius: 50px; transition: 0.5s;
+            background: #333; color: white; padding: 12px 30px; border-radius: 50px; transition: 0.5s;
         }
         #toast.show { bottom: 40px; }
     </style>
@@ -103,70 +98,65 @@
 
 <div id="view-modal" class="modal">
     <div class="modal-box">
-        <h3 id="v-title" style="margin:0;">বিবরণ</h3>
-        <hr style="opacity:0.2; margin:15px 0;">
-        <p id="v-note" style="font-size:18px;"></p>
-        <p id="v-time" style="font-size:12px; opacity:0.6;"></p>
-        <button class="btn-main" onclick="closeModal('view-modal')">ঠিক আছে</button>
+        <h3 id="v-title">বিবরণ</h3>
+        <p id="v-note" style="font-size:18px; margin:20px 0;"></p>
+        <button class="btn-main" onclick="playClick(); closeModal('view-modal')">বন্ধ করুন</button>
     </div>
 </div>
 
 <div id="exit-modal" class="modal">
     <div class="modal-box">
         <h3>বের হতে চান?</h3>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button onclick="confirmExit()" style="flex:1; background:var(--minus); border:none; color:white; padding:12px; border-radius:15px; font-weight:bold;">হ্যাঁ</button>
-            <button onclick="closeModal('exit-modal')" style="flex:1; background:var(--plus); border:none; color:white; padding:12px; border-radius:15px; font-weight:bold;">না</button>
+        <div style="display:flex; gap:12px; margin-top:20px;">
+            <button onclick="playClick(); confirmExit()" style="flex:1; background:var(--minus); color:white; padding:15px; border-radius:18px; border:none; font-weight:bold;">হ্যাঁ</button>
+            <button onclick="playClick(); closeModal('exit-modal')" style="flex:1; background:var(--plus); color:white; padding:15px; border-radius:18px; border:none; font-weight:bold;">না</button>
         </div>
     </div>
 </div>
 
 <div class="header">
-    <button class="theme-btn" onclick="toggleTheme()">🌓 থিম</button>
-    <small>মোট ব্যালেন্স</small>
+    <button onclick="playClick(); toggleTheme()" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); border:none; color:white; padding:8px 15px; border-radius:12px;">🌓 থিম</button>
+    <p style="opacity:0.8; margin:0;">মোট জমানো টাকা</p>
     <h1 id="total-bal" style="font-size:48px; margin:5px 0;">৳ ০</h1>
 </div>
 
 <div class="bike-card">
     <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-        <strong>RTR 160 4V লক্ষ্য</strong>
+        <strong>🏍️ Apache RTR 4V Fund</strong>
         <span id="percent">0%</span>
     </div>
     <h2 id="bike-fund" style="margin:0 0 10px 0;">৳ ০</h2>
     <div style="width:100%; height:8px; background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden;">
-        <div id="bar" style="width:0%; height:100%; background:white; transition:1s;"></div>
+        <div id="bar" style="width:0%; height:100%; background:white; transition:1.5s ease-out;"></div>
     </div>
 </div>
 
 <div class="card">
-    <input type="number" id="amt" placeholder="টাকার পরিমাণ" inputmode="numeric">
-    <textarea id="note" placeholder="বিস্তারিত লিখুন..."></textarea>
+    <input type="number" id="amt" placeholder="টাকার পরিমাণ (৳)" inputmode="numeric">
+    <textarea id="note" placeholder="কিসের জন্য খরচ/জমা?"></textarea>
     <div class="type-selector">
-        <div id="p-btn" class="t-btn active-plus" onclick="setMode('plus')">জমা (+)</div>
-        <div id="m-btn" class="t-btn" onclick="setMode('minus')">খরচ (-)</div>
+        <div id="p-btn" class="t-btn active-plus" onclick="playClick(); setMode('plus')">জমা (+)</div>
+        <div id="m-btn" class="t-btn" onclick="playClick(); setMode('minus')">খরচ (-)</div>
     </div>
-    <button class="btn-main" onclick="save()">সেভ করুন 🚀</button>
+    <button class="btn-main" onclick="playClick(); save()">যোগ করুন 🚀</button>
 </div>
 
-<div style="display:flex; justify-content:space-between; align-items:center;">
-    <h3 style="margin-left:20px;">ইতিহাস</h3>
-    <button class="btn-reset" onclick="resetAll()">Reset All 🗑️</button>
-</div>
+<button class="btn-reset" onclick="playClick(); resetAll()">Reset Data 🗑️</button>
 
 <div id="history"></div>
 <div style="height:50px;"></div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('naim_v4')) || [];
+    let db = JSON.parse(localStorage.getItem('naim_v5')) || [];
     let mode = 'plus';
 
-    // থিম টগল
-    function toggleTheme() {
-        document.getElementById('body').classList.toggle('dark');
-        localStorage.setItem('naim_theme', document.getElementById('body').classList.contains('dark') ? 'dark' : 'light');
+    // সাউন্ড ফাংশন
+    function playClick() {
+        const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
+        audio.play();
     }
 
-    // ব্যাক বাটন পপ-আপ
+    // ব্যাক বাটন
     history.pushState(null, null, location.href);
     window.onpopstate = () => openModal('exit-modal');
 
@@ -184,6 +174,11 @@
 
     function confirmExit() { window.location.href = "about:blank"; }
 
+    function toggleTheme() {
+        document.getElementById('body').classList.toggle('dark');
+        localStorage.setItem('naim_theme', document.getElementById('body').classList.contains('dark') ? 'dark' : 'light');
+    }
+
     function setMode(m) {
         mode = m;
         document.getElementById('p-btn').className = 't-btn' + (m==='plus'?' active-plus':'');
@@ -193,30 +188,27 @@
     function save() {
         const val = Number(document.getElementById('amt').value);
         const txt = document.getElementById('note').value || "বিবরণ নেই";
-        if(!val) return showToast("টাকার পরিমাণ দিন");
+        if(!val) return showToast("টাকা লিখুন!");
 
         db.push({ a: mode==='minus'?-val:val, n: txt, d: new Date().toLocaleString('bn-BD') });
-        localStorage.setItem('naim_v4', JSON.stringify(db));
+        localStorage.setItem('naim_v5', JSON.stringify(db));
         render();
         document.getElementById('amt').value = '';
         document.getElementById('note').value = '';
-        showToast("সফলভাবে সেভ হয়েছে ✅");
+        showToast("সফল হয়েছে ✅");
     }
 
-    function viewDetails(index) {
-        const item = db[index];
-        document.getElementById('v-title').innerText = item.a > 0 ? "জমার বিবরণ" : "খরচের বিবরণ";
-        document.getElementById('v-note').innerText = item.n;
-        document.getElementById('v-time').innerText = item.d;
+    function view(i) {
+        document.getElementById('v-note').innerText = db[i].n;
         openModal('view-modal');
     }
 
     function resetAll() {
-        if(confirm("সব হিসাব কি মুছে ফেলতে চান? এটি আর ফিরে আসবে না!")) {
+        if(confirm("সব হিসাব কি মুছে ফেলতে চান?")) {
             db = [];
-            localStorage.setItem('naim_v4', JSON.stringify(db));
+            localStorage.setItem('naim_v5', JSON.stringify(db));
             render();
-            showToast("সব রিসেট করা হয়েছে 🗑️");
+            showToast("রিসেট হয়েছে 🗑️");
         }
     }
 
@@ -225,9 +217,9 @@
         h.innerHTML = ''; let t = 0;
         db.forEach((item, index) => {
             t += item.a;
-            h.innerHTML = `<div class="item" onclick="viewDetails(${index})">
-                <div><b>View Details</b><br><small style="opacity:0.6;">${item.d}</small></div>
-                <div style="color:${item.a>0?'var(--plus)':'var(--minus)'}; font-weight:bold; font-size:18px;">${item.a>0?'+':''}${item.a}</div>
+            h.innerHTML = `<div class="item" onclick="playClick(); view(${index})">
+                <div><b>বিস্তারিত দেখুন</b><br><small style="opacity:0.6;">${item.d}</small></div>
+                <div style="color:${item.a>0?'var(--plus)':'var(--minus)'}; font-weight:800; font-size:18px;">${item.a>0?'+':''}${item.a}</div>
             </div>` + h.innerHTML;
         });
         document.getElementById('total-bal').innerText = `৳ ${t}`;

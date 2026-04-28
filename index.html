@@ -2,298 +2,192 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohammad Naim - Smart Dashboard Final</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Naim Pro Cashbook</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
+        
         :root {
-            --primary: #4834d4;
-            --bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text: #2d3436;
-            --border: #f1f1f1;
-            --danger: #d63031;
-            --success: #27ae60;
+            --primary: #4834d4; --secondary: #6c5ce7; --bg: #f8f9fd;
+            --card: #ffffff; --text: #2d3436; --plus: #10ac84; --minus: #ee5253;
+            --shadow: 0 10px 30px rgba(72, 52, 212, 0.1);
         }
 
-        /* ১০টি প্রিমিয়াম থিম */
-        .theme-blue { --primary: #4834d4; --header: linear-gradient(135deg, #4834d4, #686de0); }
-        .theme-dark { --primary: #a29bfe; --header: linear-gradient(135deg, #2d3436, #000000); --bg: #1e272e; --card-bg: #2f3542; --text: #ffffff; --border: #3d3d3d; }
-        .theme-gold { --primary: #f1c40f; --header: linear-gradient(135deg, #f1c40f, #d35400); }
-        .theme-green { --primary: #10ac84; --header: linear-gradient(135deg, #10ac84, #1dd1a1); }
-        .theme-pink { --primary: #ef5777; --header: linear-gradient(135deg, #ef5777, #f53b57); }
-        .theme-purple { --primary: #8e44ad; --header: linear-gradient(135deg, #8e44ad, #9b59b6); }
-        .theme-ocean { --primary: #0097e6; --header: linear-gradient(135deg, #0097e6, #8c7ae6); }
-        .theme-orange { --primary: #e67e22; --header: linear-gradient(135deg, #e67e22, #d35400); }
-        .theme-cyan { --primary: #0fbcf9; --header: linear-gradient(135deg, #0fbcf9, #34e7e4); }
-        .theme-night { --primary: #5758bb; --header: linear-gradient(135deg, #0652DD, #000000); }
-
-        * { box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        body { background: var(--bg); color: var(--text); margin: 0; padding: 10px; overflow-x: hidden; }
-
-        /* ✨ SMART PHOTO INTRO SCREEN */
-        #intro-loader {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #000; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; z-index: 100000;
+        body {
+            background: var(--bg); color: var(--text); font-family: 'Hind Siliguri', sans-serif;
+            margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent;
         }
-        .intro-img {
-            width: 180px; height: 180px; border-radius: 50%;
-            border: 4px solid #fff; object-fit: cover;
-            box-shadow: 0 0 25px var(--primary);
-            animation: imgPop 2s ease-out forwards; opacity: 0;
-        }
-        .intro-text { 
-            text-align: center; color: white; margin-top: 25px;
-            animation: textSlideUp 1.5s ease-out 0.5s forwards; opacity: 0;
-        }
-        @keyframes imgPop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1.1); opacity: 1; } }
-        @keyframes textSlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes fadeAway { to { opacity: 0; visibility: hidden; } }
 
-        .app-shell { display: none; animation: fadeIn 1s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+        /* হেডার ডিজাইন */
         .header {
-            background: var(--header); padding: 65px 20px; color: white; 
-            text-align: center; border-bottom-left-radius: 45px; border-bottom-right-radius: 45px;
-            position: relative; box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; padding: 60px 20px 40px; text-align: center;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
         }
 
-        .top-btn { position: absolute; top: 20px; padding: 8px 16px; border-radius: 14px; border: none; color: white; font-weight: 700; cursor: pointer; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); font-size: 12px; }
-        .reset-btn { right: 20px; background: rgba(214, 48, 49, 0.4); border: 1px solid rgba(255,255,255,0.3); }
-        .theme-btn { left: 20px; }
-
-        .main-bal { font-size: 48px; font-weight: 800; margin: 10px 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.2); }
-        .card { margin: 15px 10px; padding: 22px; border-radius: 30px; background: var(--card-bg); border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.06); }
-        .bike-card { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; }
-        .progress-bar { height: 14px; background: rgba(255,255,255,0.25); border-radius: 10px; overflow: hidden; margin: 15px 0; }
-        .fill { height: 100%; background: #fff; width: 0%; transition: 2.5s ease-in-out; }
-
-        /* 🔴 লাল প্রফেশনাল বর্ডার */
-        .red-box { border: 2.5px solid var(--danger) !important; border-radius: 18px !important; margin-bottom: 12px; overflow: hidden; background: var(--card-bg); }
-        input, select, textarea { width: 100%; padding: 18px; border: none; background: transparent; color: var(--text); font-size: 16px; outline: none; }
-        textarea { height: 100px; resize: none; }
-
-        .btn-add { width: 100%; padding: 20px; border-radius: 22px; border: none; background: var(--primary); color: white; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-        .btn-add:active { transform: scale(0.96); }
-
-        /* লেনদেন লিস্ট */
-        .item { background: var(--card-bg); padding: 20px; border-radius: 25px; margin: 0 10px 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
-        .view-btn { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
-
-        /* নোটিফিকেশন */
-        #toast { 
-            position: fixed; left: -350px; top: 120px; background: var(--success); color: white; 
-            padding: 18px 28px; border-radius: 0 35px 35px 0; font-weight: 700; z-index: 100001; transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        /* কার্ড ডিজাইন */
+        .main-card {
+            background: var(--card); margin: -30px 15px 15px; padding: 25px;
+            border-radius: 30px; box-shadow: var(--shadow);
         }
 
-        /* মডাল স্টাইল */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 10001; backdrop-filter: blur(12px); }
-        .modal-box { background: var(--card-bg); width: 88%; padding: 35px; border-radius: 40px; text-align: center; border: 1px solid var(--border); animation: pop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        @keyframes pop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .bike-box {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe); color: white;
+            padding: 20px; border-radius: 25px; margin: 0 15px 15px;
+        }
 
-        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 25px 0; }
-        .t-dot { height: 38px; border-radius: 12px; cursor: pointer; border: 2px solid rgba(255,255,255,0.5); }
+        /* ইনপুট ও বাটন */
+        input, textarea {
+            width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 18px;
+            border: 1px solid #eee; outline: none; font-size: 16px; box-sizing: border-box; background: #fafafa;
+        }
+
+        .type-selector { display: flex; gap: 10px; margin: 15px 0; }
+        .t-btn {
+            flex: 1; padding: 15px; border-radius: 18px; border: 2px solid #eee;
+            text-align: center; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .t-btn.active-plus { border-color: var(--plus); background: var(--plus); color: white; }
+        .t-btn.active-minus { border-color: var(--minus); background: var(--minus); color: white; }
+
+        .btn-submit {
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            background: var(--primary); color: white; font-size: 18px; font-weight: bold;
+            box-shadow: 0 8px 20px rgba(72, 52, 212, 0.3);
+        }
+
+        /* ইতিহাস তালিকা */
+        .item {
+            background: white; margin: 10px 15px; padding: 18px; border-radius: 22px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        }
+
+        /* কাস্টম এক্সিট পপ-আপ (সবচাইতে হাই-কোয়ালিটি) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none; align-items: center;
+            justify-content: center; z-index: 10000;
+        }
+        .modal-box {
+            background: white; padding: 30px; border-radius: 30px; width: 80%; text-align: center;
+        }
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-yes { flex: 1; background: var(--minus); color: white; padding: 12px; border-radius: 15px; border: none; font-weight: bold; }
+        .btn-no { flex: 1; background: var(--plus); color: white; padding: 12px; border-radius: 15px; border: none; font-weight: bold; }
+
+        #toast {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 12px 30px; border-radius: 50px;
+            transition: 0.5s; z-index: 20000;
+        }
+        #toast.show { bottom: 40px; }
     </style>
 </head>
-<body class="theme-blue">
+<body>
 
-<div id="intro-loader">
-    <img src="https://i.ibb.co/q3dCRYB6/1766743745216.jpg" class="intro-img" alt="Mohammad Naim">
-    <div class="intro-text">
-        <h1 style="font-size: 32px; margin:0; font-weight: 700;">আসসালামু আলাইকুম, নাঈম</h1>
-        <p style="letter-spacing: 4px; opacity: 0.8; font-size: 14px;">স্মার্ট ক্যাশ বুক লোড হচ্ছে...</p>
+<div id="toast"></div>
+
+<div id="exit-modal" class="modal-overlay">
+    <div class="modal-box">
+        <h3 style="margin:0;">অ্যাপ থেকে বের হতে চান?</h3>
+        <p style="color:#666;">আপনার সকল হিসাব সেভ করা আছে।</p>
+        <div class="modal-btns">
+            <button class="btn-yes" onclick="confirmExit()">হ্যাঁ</button>
+            <button class="btn-no" onclick="closeModal()">না</button>
+        </div>
     </div>
 </div>
 
-<div id="toast">কংগ্রাচুলেশন! হিসাব যুক্ত হয়েছে।</div>
-
-<div class="app-shell" id="app">
+<div id="main-app">
     <div class="header">
-        <button class="top-btn theme-btn" onclick="openModal('themeModal')">🎨 থিম</button>
-        <button class="top-btn reset-btn" onclick="openModal('resetModal')">ফ্যাক্টরি রিসেট 🗑️</button>
-        <div style="font-size: 14px; opacity: 0.9;">আপনার বর্তমান ব্যালেন্স</div>
-        <div class="main-bal" id="total-bal">৳ ০</div>
+        <p style="opacity:0.8; margin:0;">হ্যালো নাঈম, আপনার মোট ব্যালেন্স</p>
+        <h1 id="total-bal" style="font-size:45px; margin:5px 0;">৳ ০</h1>
     </div>
 
-    <div class="card bike-card">
-        <div style="display: flex; justify-content: space-between;">
-            <strong>🏍️ আরটিআর ১৬০ ফোর-ভি ফান্ড</strong>
-            <span id="bike-per" style="background:rgba(255,255,255,0.3); padding:3px 12px; border-radius:12px; font-weight:700;">০%</span>
+    <div class="bike-box">
+        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+            <span>🏍️ RTR 160 4V লক্ষ্য</span>
+            <span id="percent">0%</span>
         </div>
-        <h1 id="bike-amt" style="margin: 12px 0; font-size: 38px;">৳ ০</h1>
-        <div class="progress-bar"><div id="bike-progress" class="fill"></div></div>
-        <p style="font-size: 13px; margin:0; opacity: 0.9;">টার্গেট সঞ্চয়: ১,৫০,০০০ ৳</p>
-    </div>
-
-    <div class="input-area" style="padding: 10px;">
-        <div class="red-box"><input type="number" id="amt" placeholder="টাকার পরিমাণ (৳) লিখুন"></div>
-        <div class="red-box"><textarea id="note" placeholder="লেনদেনের বিস্তারিত বিবরণ দিন..."></textarea></div>
-        <div class="red-box">
-            <select id="type">
-                <option value="plus">টাকা জমা হয়েছে (+)</option>
-                <option value="minus">টাকা খরচ হয়েছে (-)</option>
-            </select>
+        <h2 id="bike-fund" style="margin:0 0 10px 0;">৳ ০</h2>
+        <div style="width:100%; height:8px; background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden;">
+            <div id="bar" style="width:0%; height:100%; background:white; transition:1s;"></div>
         </div>
-        <button class="btn-add" onclick="saveData()">হিসাব যোগ করুন 🚀</button>
     </div>
 
-    <div id="item-list" style="margin-top: 10px; padding-bottom: 30px;"></div>
-</div>
-
-<div class="modal" id="themeModal">
-    <div class="modal-box">
-        <h3 style="margin-top: 0;">আপনার প্রিয় থিম</h3>
-        <div class="theme-grid">
-            <div class="t-dot" style="background:#4834d4" onclick="setTheme('theme-blue')"></div>
-            <div class="t-dot" style="background:#2d3436" onclick="setTheme('theme-dark')"></div>
-            <div class="t-dot" style="background:#f1c40f" onclick="setTheme('theme-gold')"></div>
-            <div class="t-dot" style="background:#10ac84" onclick="setTheme('theme-green')"></div>
-            <div class="t-dot" style="background:#ef5777" onclick="setTheme('theme-pink')"></div>
-            <div class="t-dot" style="background:#8e44ad" onclick="setTheme('theme-purple')"></div>
-            <div class="t-dot" style="background:#0097e6" onclick="setTheme('theme-ocean')"></div>
-            <div class="t-dot" style="background:#e67e22" onclick="setTheme('theme-orange')"></div>
-            <div class="t-dot" style="background:#0fbcf9" onclick="setTheme('theme-cyan')"></div>
-            <div class="t-dot" style="background:#5758bb" onclick="setTheme('theme-night')"></div>
+    <div class="main-card">
+        <input type="number" id="amt" placeholder="টাকার পরিমাণ (৳)" inputmode="numeric">
+        <textarea id="note" placeholder="লেনদেনের বিবরণ..."></textarea>
+        <div class="type-selector">
+            <div id="p-btn" class="t-btn active-plus" onclick="setMode('plus')">জমা (+)</div>
+            <div id="m-btn" class="t-btn" onclick="setMode('minus')">খরচ (-)</div>
         </div>
-        <button class="btn-add" style="background:#636e72; padding:15px;" onclick="closeModal('themeModal')">বন্ধ করুন</button>
+        <button class="btn-submit" onclick="addEntry()">হিসাব যোগ করুন 🚀</button>
     </div>
-</div>
 
-<div class="modal" id="resetModal">
-    <div class="modal-box" style="border: 2px solid var(--danger);">
-        <h2 style="color:var(--danger); margin-top: 0;">⚠️ সাবধান নাঈম!</h2>
-        <p>ফ্যাক্টরি রিসেট করলে আপনার সব জমানো হিসাব চিরতরে মুছে যাবে। আপনি কি নিশ্চিত?</p>
-        <button class="btn-add" onclick="factoryReset()">হ্যাঁ, সব মুছে ফেলুন</button>
-        <button class="btn-add" style="background:#636e72; margin-top:12px; padding:15px;" onclick="closeModal('resetModal')">না, ফিরে যাই</button>
-    </div>
-</div>
-
-<div class="modal" id="detModal">
-    <div class="modal-box">
-        <h2 id="d-type" style="margin-top: 0;">লেনদেনের তথ্য</h2>
-        <div style="text-align: left; padding: 22px; background: var(--bg); border-radius: 25px; border-left: 6px solid var(--danger);">
-            <p>💰 <strong>টাকা:</strong> ৳ <span id="d-amt"></span></p>
-            <p>📝 <strong>নোট:</strong> <span id="d-note"></span></p>
-            <p>⏰ <strong>সময়:</strong> <span id="d-time"></span></p>
-        </div>
-        <button class="btn-add" style="margin-top: 25px;" onclick="closeModal('detModal')">ঠিক আছে</button>
-    </div>
+    <div id="history"></div>
+    <div style="height:50px;"></div>
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('naim_smart_v17')) || [];
-    let currentTotal = 0;
+    let db = JSON.parse(localStorage.getItem('naim_simple_db')) || [];
+    let currentMode = 'plus';
 
-    const playSound = (f, t, d) => {
-        const c = new (window.AudioContext || window.webkitAudioContext)();
-        const o = c.createOscillator();
-        const g = c.createGain();
-        o.type = t; o.frequency.setValueAtTime(f, c.currentTime);
-        o.connect(g); g.connect(c.destination);
-        o.start(); g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + d);
-        o.stop(c.currentTime + d);
+    // ব্যাক বাটন ম্যাজিক
+    history.pushState(null, null, location.href);
+    window.onpopstate = function() {
+        document.getElementById('exit-modal').style.display = 'flex';
+        history.pushState(null, null, location.href);
     };
 
-    window.onload = () => {
-        // Welcome Voice
-        setTimeout(() => {
-            const msg = new SpeechSynthesisUtterance("Welcome Mohammad Naim to your professional cash book");
-            msg.lang = 'en-US'; msg.rate = 0.9;
-            window.speechSynthesis.speak(msg);
-        }, 800);
+    function closeModal() { document.getElementById('exit-modal').style.display = 'none'; }
+    function confirmExit() { window.location.href = "about:blank"; }
 
-        // Transition to App
-        setTimeout(() => {
-            document.getElementById('intro-loader').style.animation = 'fadeAway 0.8s forwards';
-            document.getElementById('app').style.display = 'block';
-            if(localStorage.getItem('naim_theme')) setTheme(localStorage.getItem('naim_theme'));
-            render();
-        }, 4500);
-    };
-
-    function showToast(msg, color) {
-        const t = document.getElementById('toast');
-        t.innerText = msg; t.style.background = color; t.style.left = "0px";
-        setTimeout(() => { t.style.left = "-350px"; }, 3000);
+    function setMode(m) {
+        currentMode = m;
+        document.getElementById('p-btn').className = 't-btn' + (m==='plus'?' active-plus':'');
+        document.getElementById('m-btn').className = 't-btn' + (m==='minus'?' active-minus':'');
     }
 
-    function openModal(id) { playSound(600, 'sine', 0.2); document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    
-    function setTheme(t) {
-        document.body.className = t;
-        localStorage.setItem('naim_theme', t);
-        playSound(800, 'sine', 0.1);
-    }
+    function addEntry() {
+        const val = Number(document.getElementById('amt').value);
+        const note = document.getElementById('note').value || "বিবরণ নেই";
+        if (!val) return showToast("টাকা লিখুন!");
 
-    function saveData() {
-        const amt = Number(document.getElementById('amt').value);
-        const note = document.getElementById('note').value || "কোনো বিবরণ নেই";
-        const type = document.getElementById('type').value;
-
-        if(!amt) return;
-        if(type === 'minus' && amt > currentTotal) { playSound(150, 'square', 0.5); alert("আপনার ব্যালেন্সে এত টাকা নেই নাঈম!"); return; }
-
-        db.push({ id: Date.now(), amt: type === 'minus' ? -amt : amt, note, time: new Date().toLocaleString('bn-BD') });
-        localStorage.setItem('naim_smart_v17', JSON.stringify(db));
-        
-        const color = type === 'plus' ? '#27ae60' : '#d63031';
-        showToast(type === 'plus' ? 'কংগ্রাচুলেশন! টাকা জমা হয়েছে।' : 'হিসাব যুক্ত! টাকা খরচ হয়েছে।', color);
-        
-        type === 'plus' ? playSound(1000, 'sine', 0.4) : playSound(300, 'sawtooth', 0.4);
+        db.push({ a: currentMode === 'minus' ? -val : val, n: note, d: new Date().toLocaleString('bn-BD') });
+        localStorage.setItem('naim_simple_db', JSON.stringify(db));
         render();
         document.getElementById('amt').value = '';
         document.getElementById('note').value = '';
+        showToast("সফলভাবে যোগ হয়েছে ✅");
     }
 
     function render() {
-        const list = document.getElementById('item-list');
-        list.innerHTML = '';
-        let total = 0;
-        db.slice().reverse().forEach(item => {
-            total += item.amt;
-            list.innerHTML += `
-                <div class="item">
-                    <div><b>${item.amt > 0 ? '৳ জমা' : '৳ খরচ'}</b><br><small style="opacity:0.6;">${item.time.split(',')[0]}</small></div>
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <span style="color:${item.amt > 0 ? 'var(--success)':'var(--danger)'}; font-weight:800; font-size:18px;">${Math.abs(item.amt)}</span>
-                        <button class="view-btn" onclick="showDetails(${item.id})">VIEW</button>
-                    </div>
-                </div>
-            `;
+        const list = document.getElementById('history');
+        list.innerHTML = ''; let total = 0;
+        db.slice().reverse().forEach(i => {
+            total += i.a;
+            list.innerHTML += `<div class="item" style="border-left: 5px solid ${i.a>0?'var(--plus)':'var(--minus)'}">
+                <div><b>${i.n}</b><br><small style="opacity:0.6;">${i.d}</small></div>
+                <div style="color:${i.a>0?'var(--plus)':'var(--minus)'}; font-weight:800;">${i.a>0?'+':''}${i.a}</div>
+            </div>`;
         });
-        currentTotal = total;
-        document.getElementById('total-bal').innerText = `৳ ${total.toLocaleString('bn-BD')}`;
-        
-        const bikeVal = total > 0 ? (total * 0.8) : 0;
-        const per = Math.min(((bikeVal / 150000) * 100), 100).toFixed(1);
-        document.getElementById('bike-amt').innerText = `৳ ${Math.floor(bikeVal).toLocaleString('bn-BD')}`;
-        document.getElementById('bike-progress').style.width = per + '%';
-        document.getElementById('bike-per').innerText = per + '%';
-        
-        if(bikeVal >= 150000) playSound(1200, 'sine', 1.5);
+        document.getElementById('total-bal').innerText = `৳ ${total}`;
+        let bike = total * 0.8;
+        let p = Math.min((bike/150000)*100, 100).toFixed(1);
+        document.getElementById('bike-fund').innerText = `৳ ${Math.floor(bike)}`;
+        document.getElementById('percent').innerText = p + '%';
+        document.getElementById('bar').style.width = p + '%';
     }
 
-    function showDetails(id) {
-        playSound(500, 'sine', 0.2);
-        const item = db.find(i => i.id === id);
-        document.getElementById('d-type').innerText = item.amt > 0 ? "টাকা জমা" : "টাকা খরচ";
-        document.getElementById('d-amt').innerText = Math.abs(item.amt).toLocaleString('bn-BD');
-        document.getElementById('d-note').innerText = item.note;
-        document.getElementById('d-time').innerText = item.time;
-        openModal('detModal');
+    function showToast(m) {
+        const t = document.getElementById('toast');
+        t.innerText = m; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    function factoryReset() {
-        db = []; localStorage.removeItem('naim_smart_v17'); 
-        render(); closeModal('resetModal');
-        showToast("সব ডাটা ফ্যাক্টরি রিসেট হয়েছে!", "#333");
-        playSound(200, 'square', 0.6);
-    }
+    render();
 </script>
-
 </body>
 </html>
